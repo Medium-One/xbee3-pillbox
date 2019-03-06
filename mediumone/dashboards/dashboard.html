@@ -1,0 +1,187 @@
+<style>
+   div.chart {
+   /* width: 48vw; */
+   width: 100%;
+   height: 37vh;
+   }
+   h2.title {
+   text-align: center;
+   margin: 0;
+   font-weight: bold;
+   margin-top: 10px;
+   margin-bottom: 8px;
+   }
+   p.subtitle {
+   margin: 0;
+   line-height: 1.5;
+   }
+   .table-bordered>tbody>tr>td,
+   .table-bordered>tbody>tr>th,
+   .table-bordered>tfoot>tr>td,
+   .table-bordered>tfoot>tr>th,
+   .table-bordered>thead>tr>td,
+   .table-bordered>thead>tr>th {
+   border: none;
+   }
+   .table-bordered {
+   border: none;
+   }
+   .option {
+   border-color: #e7eaec;
+   background-color: white;
+   font-weight: bold;
+   padding-top: 4px;
+   padding-bottom: 4px;
+   }
+   .option-inactive {
+   color: #e7eaec;
+   background-color: white;
+   }
+   .option-inactive:hover {
+   color: grey;
+   }
+   .option-active {
+   color: #808080 !important;
+   border-color: #e7eaec;
+   background-color: white;
+   font-weight: bold
+   }
+   table.dataTable thead > tr > th {
+   padding-left: 10px;
+   }
+
+    /*---Notification---BEGIN---*/
+    .notification-container {
+    padding: 10px 10px 25px 10px;
+    }
+
+    .notification {
+    border: 2px solid WhiteSmoke;
+    margin-left: 10px;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: grid;
+    grid-template-columns: 0.5fr 5fr 1fr;
+    grid-row-gap: 7px;
+    }
+
+
+    .clickable:hover {
+    cursor: pointer;
+    background-color: WhiteSmoke;
+    }
+
+    .notification-icon {
+    display: inline-block;
+    grid-row: 1;
+    grid-row-end: span 2;
+    align-self: center;
+    text-align: center;
+    }
+
+    .notification-title {
+    display: inline-block;
+    grid-row: 1;
+    align-self: center;
+    font-weight: bold;
+    }
+
+    .notification-time {
+    display: inline-block;
+    text-align: right;
+    align-self: center;
+    grid-row: 1;
+    grid-column: 4;
+    }
+
+    .notification-message {
+    grid-row: 2;
+    grid-column-end: span 2;
+    }
+
+    .notification-hide {
+    text-align: right;
+    color: #bbb4b4;
+
+    grid-row: 2;
+    }
+
+   /* .notification-hide:hover {
+    color: rgb(103, 106, 108);
+    cursor: pointer;
+    }*/
+
+    .notification-controller {
+    float:right
+    }
+    .active-page-btn:hover {
+        cursor:pointer;
+        color:black;
+    }
+    .inactive-page-btn: {
+        color: grey;
+    }
+    .clickable:hover{
+        cursor:pointer;
+    }
+
+    /*---Notification---END---*/
+
+
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<div ng-controller="DashboardController as ctr" >
+
+<div class="row wrapper border-bottom white-bg page-heading">
+   <div class="col-sm-12">
+      <h2>My Pillbox Dashboard</h2>
+   </div>
+</div>
+<div class="row wrapper wrapper-content animated fadeInRight">
+ 
+    <div class="col-sm-12" ng-if="ctr.no_device_message">
+        <h3>{{ctr.no_device_message}}</h3>
+    </div>
+
+    <div class="col-sm-12" style="margin-top:30px;margin-bottom: 100px;" ng-if="!ctr.no_device_message">
+        <div class="col-sm-12">
+            <span ng-if="!notifsLoaded" style="color:red;">Loading...</span>
+
+        </div>
+           <div class="notification-container">
+            <div class="section-header">
+              <div class="btn-group pull-left">
+                <button class="btn option" ng-repeat="tab in ctr.logs_table_tabs track by $index" ng-class="{'option-active': ctr.logs_selected_tab === $index, 'option-inactive': notifCategory !== $index}" ng-click="ctr.logs_selected_tab = $index;">{{tab.name}}</button>
+
+              </div>
+              <div id="date-select"  style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; float: right; margin-right: 3px;">
+                    <i class="glyphicon glyphicon-calendar fas fa-calendar"></i>&nbsp;
+                    <span></span>
+                    <b class="caret"></b>
+              </div>
+
+            </div>
+
+
+            <div id="notificationPage" class="col-sm-12" ng-show="ctr.filteredNotifications.length !== 0" style="margin-top:20px">
+              <div class="notification" ng-repeat="notification in ctr.filteredNotifications track by $index" ng-show = "ctr.isNotificationDisplay($index)">
+               
+                <div class="notification-title">{{notification.title}}</div>
+                <div class="notification-time">{{notification.time}}</div>
+                <div class="notification-message" ng-bind-html="notification.message"></div>
+              </div>
+            </div>
+            <div class="no-notifications col-sm-12" ng-show="ctr.filteredNotifications.length === 0  && notifsLoaded" style="margin-top:20px">None</div>
+            <div class="notification-controller" ng-show="ctr.filteredNotifications.length !== 0 && notifsLoaded ">
+              <span ng-class="{'active-page-btn': ctr.notifPageNum > 1, 'inactive-page-btn': ctr.notifPageNum === 1}" id="prev" ng-click="ctr.notifPageNum = ctr.notifPageNum-(ctr.notifPageNum > 1)">Previous</span>
+              <span id="page">{{ctr.notifPageNum}} of {{maxPages}}</span>
+              <span ng-class="{'active-page-btn': ctr.notifPageNum < maxPages, 'inactive-page-btn': ctr.notifPageNum === maxPages}" id="next" ng-click="ctr.notifPageNum = ctr.notifPageNum+(ctr.notifPageNum < maxPages)">Next</span>
+            </div>
+          </div>
+      </div>
+
+
+</div>
+  
+</div>

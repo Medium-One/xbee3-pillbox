@@ -1,0 +1,522 @@
+
+<style>
+    div.button {
+        cursor: pointer;
+        background: white;
+        width: fit-content;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .loader-inner > div {
+        background-color: #85c1d4;
+    }
+
+    .btn-group input {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+        pointer-events: none;
+    }
+
+    .btn-group .btn.active {
+        z-index: -1000;
+    }
+
+    label.table-tab {
+      border: 1px solid #C9C9C9 !important;
+      color: black !important;
+      background: white;
+      border-radius: 5px 5px 0px 0px !important;
+      border-bottom-width: 0px !important;
+      margin-bottom: 0px;
+    }
+
+    .btn-sm.active {
+        background: #3399C9 !important;
+        color: white !important;
+        border-color: #39C !important;
+    }
+
+    .btn-sm {
+        border: 1px solid #C9C9C9;
+        border-radius: 3px;
+        padding: 4px 20px 6px;
+    }
+
+    .btn-sm, .btn-group-sm > .btn {
+        padding: 5px 10px;
+        /* font-size: 16px; */
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+
+    label {
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    th {
+        border-bottom: 0.66px solid rgb(182, 182, 182) !important;
+        font-size:15px;
+        padding-bottom: 10px;
+        padding-left: 0px;
+        padding-right: 18px;
+        padding-top:10px;
+        text-align: left;
+        vertical-align: bottom;
+        border-top: none;
+    }
+
+    tbody>tr {
+        border-top: 0.66px solid rgb(221, 221, 221);
+        font-size: 13px;
+        padding-bottom: 20px;
+        padding-left: 0px;
+        padding-right: 10px;
+        padding-top: 20px;
+        text-align: left;
+    }
+
+    tbody>tr:hover {
+        background-color: #f6f6f6;
+    }
+
+    td {
+        border-bottom: none;
+        border-top: none !important;
+    }
+
+    table {
+        border-bottom: 1px solid #e7eaec !important;
+    }
+
+    .total {
+        border-bottom: 1px solid rgb(182, 182, 182) !important;
+    }
+
+    .total-cell {
+        padding-top:15px !important;
+        padding-bottom: 15px !important;
+    }
+
+        .option {
+  border-color: #e7eaec;
+  background-color: white;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  }
+
+  .option-inactive {
+  color:#ccc;
+  background-color:white;
+  height:40px;
+  }
+
+  .option-inactive:hover{
+  color:grey;
+  height:40px;
+  }
+
+  .option-active {
+  color: white !important;
+  border-color: #e7eaec;
+  background-color: #2196F3;
+  font-weight: bold;
+  height:40px;
+  }
+
+    .row {
+        margin-right: 0;
+    }
+
+    .ibox-title {
+        border:none;
+        font-size: 20px;
+        padding-left: 0;
+        padding-bottom: 0;
+    }
+
+    .ibox-content {
+        padding-left:15px;
+    }
+
+    .btn-primary {
+        background-color: #41D2C1 !important;
+        border-color: #41D2C1 !important;
+    }
+
+    .btn {
+        opacity: 0.9;
+    }
+
+    .btn:hover {
+        opacity: 1;
+    }
+
+
+  /*card-related*/
+    input.no-input-spin-buttons::-webkit-outer-spin-button,
+    input.no-input-spin-buttons::-webkit-inner-spin-button {
+        display: none;
+    }
+    input.no-input-spin-buttons[type='number'] {
+        -moz-appearance:textfield;
+    }
+
+    .credit-div {
+        margin-top: 10px;
+    }
+
+    .credit-input {
+        padding: 5px;
+        margin-left: 5px;
+    }
+
+    .row {
+        margin-left: 0 !important;
+    }
+
+    .form-button {
+        opacity: 0.9;
+    }
+
+    .form-button:hover {
+        opacity: 1;
+        cursor: pointer
+    }
+
+    input:focus {
+        outline-color: #41D2C1 !important;
+    }
+
+    .card-box {
+        padding: 10px;
+    }
+
+</style>
+<body>
+    <div ng-controller="TaBillingController as ctr " id="NgCtrlTag">
+
+
+
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div>
+                <h2>Manage Billings</h2>
+            </div>
+        </div>
+
+        <div class="loader row">
+            <div ng-if="!loading" class="row">
+
+                <div
+                     style="padding: 5px; margin: 5px; margin-left: 20px;"
+                     ng-if="subscription_status != 'active' && subscription_status != 'cancelling'">
+                    <div ng-if="!show_add_subscription_form">
+                        <span>You are currently not subscribed.</span><button class="btn btn-md btn-primary" style="color: white; margin-left:5px"  ng-click="add_subscription_modal()">Subscribe Now</button>
+                    </div>
+
+
+                    <form ng-if="show_add_subscription_form" id="card_form_add" class="card-box">
+
+
+                            <h4>Subscription Type:
+                                <select ng-model='ctr.subscription_type' style='margin-left: 7px; width: 71%' theme='bootstrap' ng-change="check_plan(ctr.subscription_type)"
+                                        name="sub_type"
+                                        class='view-dropdown'>
+                                      <option ng-repeat='plan in available_plans track by $index'
+                                              value="{{plan.id}}">{{formatPlanDisplay(plan)}}</option>
+                                </select>
+
+                            </h4>
+                            <div ng-if="show_credit_card">
+                            <div class="row credit-div">
+                                <div class="align-right" style="display: inline-block;">
+                                    <label>
+                                        <span>Card Number:</span>
+                                    </label>
+                                </div>
+                                <div style="display: inline-block; width: 25%; margin-left:1px">
+                                    <input type="number" name="number" class="cc no-input-spin-buttons credit-input" placeholder="XXXX XXXX XXXX XXXX" data-stripe="number"
+                                           ng-model="card.number" ng-minlength="16" ng-maxlength="16"
+                                           ng-required="true" style="width:100%"/>
+                                </div>
+
+                                <div class="align-right" style="display: inline-block;  margin-left: 40px;">
+                                    <label>
+                                        <span>CVC:</span>
+                                    </label>
+                                </div>
+                                <div style="display:inline-block;width:10%; margin-left: 40px;">
+                                    <input type="number" name="cvc" class="cvc no-input-spin-buttons credit-input" size="4" placeholder="XXX" data-stripe="cvc"
+                                           ng-model="card.cvc" ng-minlength="3" ng-maxlength="3"
+                                           ng-required="true" style="width:100%"/>
+                                </div>
+
+
+                                <div class="align-right" style="display: inline-block; margin-left: 40px;">
+                                    <label style="text-align: right;">
+                                        <span>Exp Date:</span>
+                                    </label>
+                                </div>
+                                <div style="display:inline-block; width:10%">
+                                    <input type="number" class="cc no-input-spin-buttons credit-input" size="3" placeholder="MM" data-stripe="exp-month"
+                                           ng-required="true" name="exp_month"
+                                           ng-model="card.exp_month" ng-minlength="1" ng-maxlength="2" ng-pattern="/^(0?[1-9]|1[012])$/" style="width:100%"/>
+                                </div>
+                                <div style="display:inline-block; width:10%">
+                                    <input type="number" class="cc no-input-spin-buttons credit-input" size="6" placeholder="YYYY" data-stripe="exp-year"
+                                           ng-required="true" name="exp_year"
+                                           ng-model="card.exp_year" ng-minlength="4" ng-maxlength="4" ng-pattern="/^20[12][0-9]$/" style="margin-left:0; width:100%"/>
+                                </div>
+                            </div>
+
+
+                            </div>
+                            <div class="row" style="margin-top:10px">
+                                <div style="float:left">
+                                    <span class="payment-errors"></span>
+                                </div>
+                                <div class="pull-right">
+                                    <button class="btn btn-sm form-button" ng-disabled="disabled"
+                                            type="button"
+                                            style="color: white; background: #ED5565; border: none;" ng-click="cancel_add_subscription_modal()">Cancel</button>
+                                    <button class="btn btn-sm OK form-button btn-primary"
+                                            style="color: white; border: none;" type="button"
+                                            ng-click="add_subscription()">OK</button>
+                                </div>
+                            </div>
+                        </form>
+
+                </div>
+
+
+            </div>
+
+            <div ng-if="!loading" style="padding-left: 10px;" class="row">
+
+                <div ng-if="subscription_status == 'cancelling'" class="col-lg-12">
+                    <center><h3>Your plan will cancel on {{formatTimestamp(subscription.subscription_current_period_end)}}.</h3></center>
+                </div>
+                <div ng-if="subscription_status == 'past due'" class="col-md-8">
+                    <h2><span style="color: #ff0000">Account balance past due</span></h2>
+                </div>
+
+                <div ng-if="subscription_status != 'n/a'" class="col-lg-12">
+                    <div class="ibox-title" style="border:none">
+                        <p>
+                          <b>Account Information</b>
+                        </p>
+                    </div>
+
+                    <div class="white-frame ibox-content">
+
+                        <div><label>Created on:</label> {{formatTimestamp(subscription.subscribed_at)}}</div>
+                        <div><label>Start of billing period:</label> {{formatTimestamp(subscription.subscription_current_period_start)}}</div>
+                        <div><label>Start of next billing period:</label> {{formatTimestamp(subscription.subscription_current_period_end)}}</div>
+
+                        <br/>
+
+                      
+
+                        <div ng-if="subscription.next_period.next_bill_amount">
+                            <label>Next billing cycle subscription will be:</label>
+                            ${{subscription.next_period.next_bill_amount}}
+                        </div>
+                        <div><label>Account status:</label> {{subscription.status.replace("_"," ")}}</div>
+                        <div ng-if ="!show_credit_card_form">
+                        <div ng-if="cardAvailable()"><label>Card:</label>
+                            {{subscription.account_info.card.brand}}
+                            XXXX-XXXX-XXXX-{{subscription.account_info.card.last4}}
+                          
+                            <button type="submit" class="btn btn-xs btn-primary"
+                                    ng-click="update_cc_modal()" ng-disabled="show_subscription_dropdown">Update
+                            </button>
+                        </div>
+                        <div ng-if="!cardAvailable()"><label>Card:</label>
+                            No card on file
+                            <button type="submit" class="btn btn-xs btn-primary"
+                                    ng-click="update_cc_modal()">Enter Card Information
+                            </button>
+                        </div>
+                        </div>
+                      <form ng-if="show_credit_card_form" id="card_form_update" class="card-box">
+
+                            <div class="row credit-div">
+                                <div class="align-right" style="display: inline-block;">
+                                    <label>
+                                        <span>Card Number:</span>
+                                    </label>
+                                </div>
+                                <div style="display: inline-block; width: 25%; margin-left:1px">
+                                    <input type="number" name="number" class="cc no-input-spin-buttons credit-input" placeholder="XXXX XXXX XXXX XXXX" data-stripe="number"
+                                           ng-model="card.number" ng-minlength="16" ng-maxlength="16"
+                                           ng-required="true" style="width:100%"/>
+                                </div>
+
+                                <div class="align-right" style="display: inline-block; margin-left: 40px;">
+                                    <label>
+                                        <span>CVC:</span>
+                                    </label>
+                                </div>
+                                <div style="display:inline-block;width:10%; margin-left: 40px;">
+                                    <input type="number" name="cvc" class="cvc no-input-spin-buttons credit-input" size="4" placeholder="XXX" data-stripe="cvc"
+                                           ng-model="card.cvc" ng-minlength="3" ng-maxlength="3"
+                                           ng-required="true" style="width:100%"/>
+                                </div>
+
+
+                                <div class="align-right" style="display: inline-block; margin-left: 40px;">
+                                    <label style="text-align: right;">
+                                        <span>Exp Date:</span>
+                                    </label>
+                                </div>
+                                <div style="display:inline-block; width:10%">
+                                    <input type="number" class="cc no-input-spin-buttons credit-input" size="3" placeholder="MM" data-stripe="exp-month"
+                                           ng-required="true" name="exp_month"
+                                           ng-model="card.exp_month" ng-minlength="1" ng-maxlength="2" ng-pattern="/^(0?[1-9]|1[012])$/" style="width:100%"/>
+                                </div>
+                                <div style="display:inline-block; width:10%">
+                                    <input type="number" class="cc no-input-spin-buttons credit-input" size="6" placeholder="YYYY" data-stripe="exp-year"
+                                           ng-required="true" name="exp_year"
+                                           ng-model="card.exp_year" ng-minlength="4" ng-maxlength="4" ng-pattern="/^20[12][0-9]$/" style="margin-left:0; width:100%"/>
+                                </div>
+                            </div>
+
+
+                            <div class="row" style="margin-top:10px">
+                                <div style="float:left">
+                                    <span class="payment-errors"></span>
+                                </div>
+                                <div class="pull-right">
+                                    <button class="btn btn-sm form-button" ng-disabled="disabled"
+                                            type="button"
+                                            style="color: white; background: #ED5565; border: none;" ng-click="cancel_cc_modal()">Cancel</button>
+                                    <button class="btn btn-sm OK form-button btn-primary"
+                                            style="color: white; border: none;" type="button"
+                                            ng-click="update_cc()">OK</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div ng-if="!show_subscription_dropdown">
+                        <div style="display: inline-block;"><label>Current Plan:</label>{{" " + subscription.subscription_plan.name}}</div>
+                        <div ng-if="available_plans.length > 1" style="display:inline-block;">
+                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="show_credit_card_form"
+                                ng-click="update_subscription_modal()">Change</button>
+                        </div>
+                        </div>
+                        <div ng-if='show_subscription_dropdown' class="card-box">
+                            <h4>Subscription Type:
+                                <select ng-model='ctr.subscription_type' style='margin-left: 7px; width: 71%' theme='bootstrap'
+                                        name="sub_type"
+                                        class='view-dropdown'>
+                                      <option ng-repeat='plan in available_plans track by $index'
+                                              ng-selected="subscription_type == plan.id || (subscription_type == null && $index == 1) ? true : undefined"
+                                              value="{{plan.id}}">{{formatPlanDisplay(plan)}}</option>
+                                </select>
+
+                            </h4>
+                            <div class="row">
+                                <div style="float:left">
+                                    <span class="payment-errors"></span>
+                                </div>
+                                <div class="pull-right">
+                                    <button class="btn btn-sm form-button" ng-disabled="disabled"
+                                            type="button"
+                                            style="color: white; background: #ED5565; border: none;" ng-click="cancel_update_subscription_modal()">Cancel</button>
+                                    <button class="btn btn-sm OK form-button btn-primary"
+                                            style="color: white; border: none;"
+                                            ng-click="update_subscription()">OK</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="btn-group" style="margin-top: 20px">
+                            <h3>Billing History</h3>
+                            <!--button class="btn option" ng-class="{'option-active':ctr.current_table==='Billing History', 'option-inactive': ctr.current_table!=='Billing History'}" ng-click="ctr.current_table = 'Billing History'">Billing History</button-->
+                            <!--button class="btn option" ng-class="{'option-active':ctr.current_table==='Payment History', 'option-inactive': ctr.current_table!=='Payment History'}" ng-click="ctr.current_table = 'Payment History'">Payment History</button-->
+                        </div>
+
+                        <div
+                             id="billing_history"
+                             ng-if="ctr.current_table == 'Billing History'">
+
+                            <table class="table">
+                                <colgroup>
+                                    <col style="width: 25%;"/>
+                                    <col style="width: 25%;"/>
+                                    <col style="width: 25%;"/>
+                                    <col style="width: 25%;"/>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Period</th>
+                                    <th>Billing Date</th>
+                                    <th>Plan</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody style="font-size:0.85em;">
+                                    <tr ng-repeat="invoice in past_invoices">
+                                        <td>{{invoice.invoice_number}}</td>
+                                        <td>{{formatTimestamp(invoice.period_start) + "-" + formatTimestamp(invoice.period_end)}}</td>
+                                        <td>{{formatTimestamp(invoice.date)}}</td>
+                                        <td>{{invoice.plan}}</td>
+
+                                        <td ng-if="invoice.total >= 0">${{formatPaymentAmount(invoice.total)}}</td>
+                                        <td ng-if="invoice.total < 0">-${{formatPaymentAmount(-invoice.total)}}</td>
+                                        <td>{{invoice.status}}</td>
+                                    </tr>
+                                </tbody>
+                                
+                            </table>
+                        </div>
+
+                        <div style="padding-top: 20px;" ng-if="ctr.current_table == 'Payment History'">
+                            <div style="max-height: 300px; clear:both; overflow-y: scroll;">
+                                <table class="table" style="margin-top:24px;width:100%;border-bottom: 1px solid #b6b6b6;" id="paymentTable">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="font-size:0.85em;">
+                                    <tr ng-repeat="payment in payment_history track by $index">
+                                        <td>{{formatTimestamp(payment.created)}}</td>
+                                        <td><i class='fa fa-check' style='color:#2196F3 !important' ng-if="payment.status === 'succeeded'"></i><i class="fas fa-times" style="color:red" ng-if="payment.status !== 'succeeded'"></i></td>
+                                        <td>${{formatPaymentAmount(paymentAmount(payment))}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+
+                        <div style="padding-top: 20px; float:right;">
+
+                            <button class="btn btn-danger" style="padding-left:44px; padding-right:43px;" ng-click="delete_account()" ng-if="subscription_status == 'active' && !loading">Unsubscribe</button>
+                        </div>
+
+                        <div class="col-md-3 col-sm-3 col-xs-3 pull-right"
+                             style="padding: 5px; margin: 5px; border: none;"
+                             >
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</body>

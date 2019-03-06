@@ -1,0 +1,78 @@
+<style>
+  .container-small {
+
+    min-height: 40px;
+  }
+  .container-mid {
+
+    min-height: 100px;
+  }
+  .container-tall {
+
+    min-height: 200px;
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data.js"></script>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+        <h2>Pillbox Settings</h2>
+</div>
+<div class="row wrapper wrapper-content animated fadeInRight"
+     ng-controller="PillboxSettingsController as ctr">
+
+   
+  <div id="timezone" class="col-sm-12" style="margin-bottom: 40px;">
+    <h4>Specify your timezone <select style="margin-top: 10px;margin-left: 10px" ng-options="tz for tz in ctr.timezones" ng-model="ctr.timezone"></select></h4>
+      </div>
+
+
+  <div class="col-sm-12">
+     <h4>Specify medication schedule (Txt alerts will be sent if box isn't opened 30 mins before and after these times.)</h4> 
+  </div>
+  <div id="alarms" class="col-sm-9 container-tall" style="margin-bottom: 40px;">
+    <div ng-repeat="alarm in ctr.alarms"
+         style="margin-top: 2px; line-height: 25px;"
+         class="col-sm-12">
+      <div class="col-sm-2">Schedule {{alarm.num}}</div>
+        <input type="time" class="col-sm-3"
+               ng-model="alarm.time"/>
+      <div class="col-sm-2">
+          <button type="button" class="btn btn-danger pull-right" ng-click="ctr.remove_alarm(alarm.num)">
+              Delete
+          </button>
+      </div>
+    </div>
+      <div class="col-sm-7" style="margin-top:10px">
+      <button type="button" class="btn-info btn pull-right"
+       ng-disabled="!ctr.can_add_alarm()"
+       ng-click="ctr.can_add_alarm() && ctr.add_alarm()">Add</button>
+      </div>
+  </div>
+
+  <div class="col-sm-12">
+      <h4>Send text alerts to:</h4>
+  </div>
+  <div id="sms_numbers" class="col-sm-9 container-mid">
+    <div ng-repeat="phone in ctr.phones"
+         style="margin-top: 2px; line-height: 25px;"
+         class="col-sm-12">
+        <div class="col-sm-2">Mobile</div>
+        <input type="tel" class="col-sm-3"
+               ng-model="phone.phone"/>
+      <div class="col-sm-2">
+          <button type="button" class="btn btn-danger pull-right" ng-click="ctr.remove_phone(phone.num)">
+              Delete
+          </button>
+      </div>
+    </div>
+    <div class="col-sm-7" style="margin-top:10px">
+      <button type="button" class="btn-info btn pull-right"
+       ng-disabled="!ctr.can_add_phone()"
+       ng-click="ctr.can_add_phone() && ctr.add_phone()">Add</button>
+    </div>
+
+  </div>
+
+
+</div>
